@@ -42,6 +42,7 @@ public class Game extends JPanel{
     private String word;
     
     public Game(){
+        // test
        GridBagConstraints gbc = new GridBagConstraints();
        int py, px, nb;
        
