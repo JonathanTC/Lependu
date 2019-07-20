@@ -39,7 +39,9 @@ public class Game extends JPanel{
     private int life = 6;
     private int wordCount = 0;
     private int score = 0;
+    
     private String word;
+    private char[] tabWord;
     
     public Game(){
        GridBagConstraints gbc = new GridBagConstraints();
@@ -51,12 +53,23 @@ public class Game extends JPanel{
        keyboard = new JPanel();
        keyboard.setLayout(new GridBagLayout());
        
+       /*
+        * Chargement du mot à partir du dictionnaire
+        * Creation d'une table qui contient les '*'
+       */
         try {
             this.word = loadWord("dictionnaire.txt");
+            
+            tabWord = new char[this.word.length()];
+            for(int i=0; i<tabWord.length; i++) tabWord[i] = '*';
+            
         } catch (IOException ex) {
             ex.printStackTrace();
         }
 
+        /*
+         * Creation du clavier virtuel (Controller)
+        */
        nb = px = py = 0;
        for(int i=65; i<91; i++){
            gbc.gridx = px;
@@ -97,8 +110,6 @@ public class Game extends JPanel{
                ex.printStackTrace();
            }
        }
-       
-
     } 
         
     private String loadWord(String path) throws IOException{        
@@ -134,10 +145,12 @@ public class Game extends JPanel{
         str = "Votre score actuel est de : " + score;
         g2d.drawString(str, 30, 90);
         
+        /*
+         * affichage du mot à trouver
+        */
         g2d.setFont(new Font("Arial", Font.BOLD, 30));
         g2d.setColor(Color.BLUE);
-        str = this.word;
-        g2d.drawString(str, keyboard.getLocation().x + (keyboard.getWidth()/2) - (g2d.getFontMetrics().stringWidth(str)/2), 150);
+        g2d.drawChars(tabWord, 0, tabWord.length, keyboard.getX() + keyboard.getWidth()/2 - (g2d.getFontMetrics().charsWidth(tabWord, 0, tabWord.length)/2), keyboard.getY() - 15);
         
         g2d.drawImage(img[this.life], 480, 30, 300, 300, this);
     }   
