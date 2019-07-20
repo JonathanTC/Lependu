@@ -59,6 +59,9 @@ public class Game extends JPanel{
        */
         try {
             this.word = loadWord("dictionnaire.txt");
+            removeAccents(this.word);
+            System.out.println(this.word);
+            
             
             tabWord = new char[this.word.length()];
             for(int i=0; i<tabWord.length; i++) tabWord[i] = '*';
@@ -83,7 +86,7 @@ public class Game extends JPanel{
            String letter = "" + (char)i;
            Bouton bouton = new Bouton(letter);
            bouton.setBounds(2, 2, 56, 36);
-           bouton.addActionListener(new SeekLetter(letter, word));
+           bouton.addActionListener(new SeekLetter(letter, word, tabWord));
            
            p.add(bouton);
            keyboard.add(p, gbc);
@@ -153,5 +156,13 @@ public class Game extends JPanel{
         g2d.drawChars(tabWord, 0, tabWord.length, keyboard.getX() + keyboard.getWidth()/2 - (g2d.getFontMetrics().charsWidth(tabWord, 0, tabWord.length)/2), keyboard.getY() - 15);
         
         g2d.drawImage(img[this.life], 480, 30, 300, 300, this);
-    }   
+    } 
+    
+    private void removeAccents(String word){   
+        String avec = "âäàçéêëèîïôöûüù";
+        String sans = "aaaceeeeiioouuu";
+        
+        for(int i=0; i < avec.length(); i++)
+            this.word = this.word.replace(avec.charAt(i), sans.charAt(i));
+    }
 }
