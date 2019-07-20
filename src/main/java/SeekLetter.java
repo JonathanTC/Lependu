@@ -15,22 +15,32 @@ import javax.swing.JButton;
  * @author thiro
  */
 public class SeekLetter implements ActionListener{
-    private String letter;
+    private char letter;
     private String word;
     private char[] tabWord;
+    private Game game;
     
-    public SeekLetter(String letter, String word, char[] tabWord){
-        this.letter = letter;
-        this.word = word;
-        this.tabWord = tabWord;
+    public SeekLetter(Game pGame){
+        game = pGame;
+        
+        this.letter = pGame.getLetter();
+        this.word = pGame.getWord();
+        this.tabWord = pGame.getTabWord();
     }
     
     @Override
-    public void actionPerformed(ActionEvent e) {          
-        letter = letter.toLowerCase();
+    public void actionPerformed(ActionEvent e) {    
+       
         
-        if(word.contains(letter)) System.out.println("La chaine contient la lettre " + letter);
-
+        letter = (char)((int)letter + 32);
+         
+        for(int i=0; i<word.length(); i++){
+            if(letter == word.charAt(i))
+                tabWord[i] = letter;
+        }
+        
         ((JButton)e.getSource()).setEnabled(false);
+        game.repaint();
+        
     } 
 }

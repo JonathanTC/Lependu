@@ -40,6 +40,7 @@ public class Game extends JPanel{
     private int wordCount = 0;
     private int score = 0;
     
+    private char letter;
     private String word;
     private char[] tabWord;
     
@@ -83,10 +84,11 @@ public class Game extends JPanel{
            p.setPreferredSize(new Dimension(60,40));
            p.setLayout(null);
            
-           String letter = "" + (char)i;
-           Bouton bouton = new Bouton(letter);
+           //String letter = "" + (char)i;
+           letter = (char)i;
+           Bouton bouton = new Bouton("" + letter);
            bouton.setBounds(2, 2, 56, 36);
-           bouton.addActionListener(new SeekLetter(letter, word, tabWord));
+           bouton.addActionListener(new SeekLetter(this));
            
            p.add(bouton);
            keyboard.add(p, gbc);
@@ -164,5 +166,17 @@ public class Game extends JPanel{
         
         for(int i=0; i < avec.length(); i++)
             this.word = this.word.replace(avec.charAt(i), sans.charAt(i));
+    }
+    
+    public char getLetter(){
+        return this.letter;
+    }
+    
+    public String getWord(){
+        return this.word;
+    }
+    
+    public char[] getTabWord(){
+        return this.tabWord;
     }
 }
