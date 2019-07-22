@@ -17,12 +17,14 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 /*
@@ -42,9 +44,13 @@ public class Game extends JPanel implements Observer{
     private int life, wordCount , score;   
     private char[] tabWord;  
     private Controler controler;
+    private ArrayList<Bouton> boutons = new ArrayList();
+    
+    private Window parent;
 
-    public Game(Controler controler){ 
+    public Game(Window window, Controler controler){ 
         this.controler = controler; 
+        this.parent = window;
     } 
         
     public void load(){    
@@ -57,6 +63,7 @@ public class Game extends JPanel implements Observer{
        keyboard = new JPanel();
        keyboard.setLayout(new GridBagLayout());
        
+       resetButton();
        controler.newGame();
        
         /*
@@ -74,14 +81,17 @@ public class Game extends JPanel implements Observer{
            
            char letter = (char)i;
            Bouton bouton = new Bouton("" + letter);
+          
            
            bouton.addActionListener(new ActionListener() {
                @Override
                public void actionPerformed(ActionEvent e) {
-                   controler.check(letter);
                    bouton.setEnabled(false);
+                   controler.check(letter);  
                }
            });
+           
+           boutons.add(bouton);
            
            p.add(bouton);
            keyboard.add(p, gbc);
@@ -142,7 +152,25 @@ public class Game extends JPanel implements Observer{
     public void update(int score, int life, char[] tabWord) {
         this.score = score;
         this.tabWord = tabWord;
-        this.life = life;  
+        this.life = life; 
+        
+        if(this.life == 0){
+            int choice = JOptionPane.showConfirmDialog(this, "Vous avez perdu !\nVoulez vous rejouer ?", "Game over", JOptionPane.YES_NO_OPTION);
+            
+            if(choice == JOptionPane.YES_OPTION){
+                controler.newGame();
+                resetButton();
+            }
+            else{
+                parent.changeScene(new Intro());
+            }
+        }
+        
         this.repaint();
+    }
+    
+    private void resetButton(){
+        for(Bouton b : boutons)
+            b.setEnabled(true);
     }
 }

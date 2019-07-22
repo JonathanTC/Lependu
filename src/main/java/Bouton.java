@@ -14,10 +14,20 @@ import javax.swing.JButton;
  * @author thiro
  */
 public class Bouton extends JButton{
+    
+    public Bouton(){
+        this.setMinimumSize(new Dimension(80, 30));
+        this.setBounds(2, 2, 56, 36);
+    }
+    
     public Bouton(String name){
         super(name);
         this.setMinimumSize(new Dimension(80, 30));
         this.setBounds(2, 2, 56, 36);
+    }
+    
+    public void setText(String text){
+        super.setText(text);
     }
  
 }
