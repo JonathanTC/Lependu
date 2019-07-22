@@ -15,7 +15,6 @@ public class Main {
      */
     public static void main(String[] args) {
         Window w = new Window(830, 430);
-        w.setVisible(true);
     }
     
 }

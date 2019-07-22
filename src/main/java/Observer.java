@@ -9,5 +9,5 @@
  * @author thiro
  */
 public interface Observer {
-    public void update();
+    public void update(int score, int life, char[] table);
 }

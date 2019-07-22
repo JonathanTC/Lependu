@@ -43,11 +43,9 @@ public class Window extends JFrame{
     private JMenuItem regles = new JMenuItem("Règles");
     private JMenuItem help = new JMenuItem("?");
     
+    private JPanel scene;
     private Model model = new Model();
     private Controler controler = new Controler(model);
-    private Game game = new Game(controler);
-    
-    private JPanel scene;
     
     public Window(int width, int height){
         this.setTitle("Le pendu");
@@ -56,15 +54,14 @@ public class Window extends JFrame{
         this.setLocationRelativeTo(null);
         this.setJMenuBar(menu);
         this.setResizable(false);
-         
+
         initComponent();
+        
+        this.setVisible(true);
     }
 
     
-    private void initComponent(){   
-        
-        model.addObserver(game);
-        
+    private void initComponent(){        
         /* construction de la bar de menu */
         menu.add(fichier);
         menu.add(apropos);
@@ -98,6 +95,10 @@ public class Window extends JFrame{
         nouveau.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
+                Game game = new Game(controler);
+                model.addObserver(game);
+                game.load();
+                
                 changeScene(game);
             };
         });
@@ -115,8 +116,7 @@ public class Window extends JFrame{
                 changeScene(new Regles());
             }
         }); 
-    
-        /* charge la premiere scène */
+        
         changeScene(new Intro());
     }
     

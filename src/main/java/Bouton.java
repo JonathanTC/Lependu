@@ -17,6 +17,7 @@ public class Bouton extends JButton{
     public Bouton(String name){
         super(name);
         this.setMinimumSize(new Dimension(80, 30));
+        this.setBounds(2, 2, 56, 36);
     }
  
 }
