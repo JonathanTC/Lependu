@@ -43,6 +43,10 @@ public class Window extends JFrame{
     private JMenuItem regles = new JMenuItem("Règles");
     private JMenuItem help = new JMenuItem("?");
     
+    private Model model = new Model();
+    private Controler controler = new Controler(model);
+    private Game game = new Game(controler);
+    
     private JPanel scene;
     
     public Window(int width, int height){
@@ -57,7 +61,10 @@ public class Window extends JFrame{
     }
 
     
-    private void initComponent(){         
+    private void initComponent(){   
+        
+        model.addObserver(game);
+        
         /* construction de la bar de menu */
         menu.add(fichier);
         menu.add(apropos);
@@ -91,7 +98,7 @@ public class Window extends JFrame{
         nouveau.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                changeScene(new Game());
+                changeScene(game);
             };
         });
         

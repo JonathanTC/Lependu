@@ -1,6 +1,7 @@
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -10,6 +11,8 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -32,19 +35,28 @@ import javax.swing.JPanel;
  *
  * @author thiro
  */
-public class Game extends JPanel{
+public class Game extends JPanel implements Observer{
     
     private JPanel keyboard;
     private Image[] img = new Image[7];
-    private int life = 6;
-    private int wordCount = 0;
-    private int score = 0;
+    private int life, wordCount , score;
     
     private char letter;
     private String word;
     private char[] tabWord;
     
-    public Game(){
+    private Controler controler;
+    
+    public Game(Controler controler){
+       this.controler = controler;
+       loadGame();
+    } 
+        
+    public void loadGame(){
+        
+       life = 7;
+       wordCount = score = 0;
+        
        GridBagConstraints gbc = new GridBagConstraints();
        int py, px, nb;
        
@@ -61,9 +73,6 @@ public class Game extends JPanel{
         try {
             this.word = loadWord("dictionnaire.txt");
             removeAccents(this.word);
-            System.out.println(this.word);
-            
-            
             tabWord = new char[this.word.length()];
             for(int i=0; i<tabWord.length; i++) tabWord[i] = '*';
             
@@ -74,8 +83,8 @@ public class Game extends JPanel{
         /*
          * Creation du clavier virtuel (Controller)
         */
-       nb = px = py = 0;
-       for(int i=65; i<91; i++){
+        nb = px = py = 0;
+        for(int i=65; i<91; i++){
            gbc.gridx = px;
            gbc.gridy = py;
            gbc.fill = GridBagConstraints.BOTH;
@@ -84,11 +93,16 @@ public class Game extends JPanel{
            p.setPreferredSize(new Dimension(60,40));
            p.setLayout(null);
            
-           //String letter = "" + (char)i;
            letter = (char)i;
            Bouton bouton = new Bouton("" + letter);
            bouton.setBounds(2, 2, 56, 36);
-           bouton.addActionListener(new SeekLetter(this));
+           
+           bouton.addActionListener(new ActionListener() {
+               @Override
+               public void actionPerformed(ActionEvent e) {
+                   controler.check(letter);
+               }
+           });
            
            p.add(bouton);
            keyboard.add(p, gbc);
@@ -107,7 +121,7 @@ public class Game extends JPanel{
 
        this.add(keyboard);    
        
-       for(int i=0; i<7; i++){
+       for(int i=0; i < life; i++){
            String str = "images/" + Integer.toString(i) + ".jpg";
             try{
                 img[i] = ImageIO.read(new File(str));
@@ -115,8 +129,11 @@ public class Game extends JPanel{
                ex.printStackTrace();
            }
        }
-    } 
-        
+       
+       System.out.println(word);
+       this.revalidate();
+    }
+    
     private String loadWord(String path) throws IOException{        
         String word = null;
         
@@ -157,7 +174,10 @@ public class Game extends JPanel{
         g2d.setColor(Color.BLUE);
         g2d.drawChars(tabWord, 0, tabWord.length, keyboard.getX() + keyboard.getWidth()/2 - (g2d.getFontMetrics().charsWidth(tabWord, 0, tabWord.length)/2), keyboard.getY() - 15);
         
-        g2d.drawImage(img[this.life], 480, 30, 300, 300, this);
+        /*
+        * dessin de l'image
+        */
+        g2d.drawImage(img[this.life-1], 480, 30, 300, 300, this);        
     } 
     
     private void removeAccents(String word){   
@@ -178,5 +198,22 @@ public class Game extends JPanel{
     
     public char[] getTabWord(){
         return this.tabWord;
+    }
+    
+    public int getLife(){
+        return this.life;
+    }
+    
+    public void setLife(int life){
+        this.life = life;
+    }
+
+    public int getScore(){
+        return this.score;
+    }
+
+    @Override
+    public void update() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
