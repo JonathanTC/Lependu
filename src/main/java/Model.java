@@ -21,9 +21,11 @@ import java.util.stream.Stream;
  * @author thiro
  */
 public class Model implements Observable{
-    private int score, life;
+    /*private int score, life;
     private String word;
-    private char[] tabWord;
+    private char[] tabWord;*/
+    
+    private Data data = new Data();
     
     private ArrayList<Observer> observers = new ArrayList<Observer>();
 
@@ -38,60 +40,81 @@ public class Model implements Observable{
     }
 
     @Override
-    public void notifyObservers() {
+    public void notifyObservers(GameState state) {
         for(Observer o : observers)
-            o.update(score, life, tabWord);
-    }  
+            o.update(state, data);
+    } 
     
-    private void removeAccents(){   
-        String avec = "âäàçéêëèîïôöûüù";
-        String sans = "aaaceeeeiioouuu";
-        
-        for(int i=0; i < avec.length(); i++)
-            this.word = this.word.replace(avec.charAt(i), sans.charAt(i));
+    public void writeAt(int index, char letter){
+        this.data.tabWord[index] = letter;
+    }
+    
+    public char readAt(int index){
+        return this.data.tabWord[index];
+    }
+    
+    public String getWord(){
+        return this.data.word;
+    }
+    
+    public int getLife(){
+        return this.data.life;
+    }
+    
+    public void setLife(int value){
+        this.data.life = value;
     }
         
-    public void newGame(){   
-        this.life = 7;
-        this.score = 0;
+    public void newGame(int score){   
+        this.data.life = 7;
+        this.data.score = score;
         
+        /*
+         * Récuperation d'un mot du dictionnaire
+        */
         try {
             BufferedReader b = new BufferedReader(new FileReader("dictionnaire.txt"));            
             Stream<String> s = b.lines(); 
             Object o[] = s.toArray();
 
             double rand = Math.random() * o.length;   
-            word = o[(int)rand].toString();
+            this.data.word = removeAccents(o[(int)rand].toString());
            
             b.close();  
         } catch (IOException ex) {
             Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        removeAccents();
-        
-        tabWord = new char[word.length()];
-            for(int i=0; i<tabWord.length; i++) tabWord[i] = '*';
+  
+        /*
+         * Initialisation de la table qui contient le mot avec des '*'
+        */
+        this.data.tabWord = new char[this.data.word.length()];
+            for(int i=0; i<this.data.tabWord.length; i++) this.data.tabWord[i] = '*';
             
-        this.notifyObservers();
+        this.notifyObservers(GameState.InGame);
     }
     
-    public void check(char letter){
-        boolean find = false;
+    private String removeAccents(String word){   
+        String avec = "âäàçéêëèîïôöûüù";
+        String sans = "aaaceeeeiioouuu";
         
-        letter = (char)((int)letter + 32);
+        for(int i=0; i < avec.length(); i++)
+            word = word.replace(avec.charAt(i), sans.charAt(i));
+        return word;
+    }
+    
+    public void calculScore(){
+        int points = 0;
         
-        for(int i=0; i < word.length(); i++){
-            if(letter == word.charAt(i)){
-                tabWord[i] = letter;
-                find = true;
-            }
+        switch(this.data.life){
+            case 7: points = 100; break;
+            case 6: points = 50; break;
+            case 5: points = 35; break;
+            case 4: points = 25; break;
+            case 3: points = 15; break;
+            case 2: points = 10; break;
+            case 1: points = 5; break;
         }
-        
-        if(!find)
-            life--;
-        
-        this.notifyObservers();
+        this.data.score += points;
     }
-    
 }

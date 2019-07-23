@@ -41,11 +41,10 @@ public class Game extends JPanel implements Observer{
     
     private JPanel keyboard;
     private Image[] img = new Image[7]; 
-    private int life, wordCount , score;   
-    private char[] tabWord;  
     private Controler controler;
     private ArrayList<Bouton> boutons = new ArrayList();
     
+    private Data data = new Data();
     private Window parent;
 
     public Game(Window window, Controler controler){ 
@@ -64,7 +63,7 @@ public class Game extends JPanel implements Observer{
        keyboard.setLayout(new GridBagLayout());
        
        resetButton();
-       controler.newGame();
+       controler.newGame(0);
        
         /*
          * Creation du clavier virtuel (Controller)
@@ -129,10 +128,10 @@ public class Game extends JPanel implements Observer{
 
         g2d.setFont(new Font("Arial", Font.BOLD, 15));
         g2d.setColor(Color.BLACK);
-        String str = "Nombre de mot trouvé: " + wordCount;
+        String str = "Nombre de mot trouvé: " + this.data.wordCount;
         g2d.drawString(str, 30, 70);
 
-        str = "Votre score actuel est de : " + score;
+        str = "Votre score actuel est de : " + this.data.score;
         g2d.drawString(str, 30, 90);
 
         /*
@@ -140,32 +139,46 @@ public class Game extends JPanel implements Observer{
         */
         g2d.setFont(new Font("Arial", Font.BOLD, 30));
         g2d.setColor(Color.BLUE);
-        g2d.drawChars(tabWord, 0, tabWord.length, keyboard.getX() + keyboard.getWidth()/2 - (g2d.getFontMetrics().charsWidth(tabWord, 0, tabWord.length)/2), keyboard.getY() - 15);
+        
+        g2d.drawChars(this.data.tabWord, 
+                0, 
+                this.data.tabWord.length, 
+                keyboard.getX() + keyboard.getWidth()/2 - (g2d.getFontMetrics().charsWidth(this.data.tabWord, 0, this.data.tabWord.length)/2), 
+                keyboard.getY() - 15);
 
         /*
         * dessin de l'image
         */
-        g2d.drawImage(img[this.life-1], 480, 30, 300, 300, this);   
+        g2d.drawImage(img[this.data.life-1], 480, 30, 300, 300, this);   
     } 
     
     @Override
-    public void update(int score, int life, char[] tabWord) {
-        this.score = score;
-        this.tabWord = tabWord;
-        this.life = life; 
+    public void update(GameState notifycation, Data data) {
         
-        if(this.life == 0){
-            int choice = JOptionPane.showConfirmDialog(this, "Vous avez perdu !\nVoulez vous rejouer ?", "Game over", JOptionPane.YES_NO_OPTION);
-            
+        if(notifycation.equals(GameState.InGame)){
+            // recupere les données
+            this.data = data;
+        }
+        
+        if(notifycation.equals(GameState.Win)){
+            // nouveau mot
+            controler.newGame(data.score);
+            resetButton();
+        }
+        
+        if(notifycation.equals(GameState.Lose)){
+            // relance une partie
+            int choice = JOptionPane.showConfirmDialog(this, "Vous avez perdu !, votre score est de : " + data.score + "\nVoulez vous rejouer ?", "Game over", JOptionPane.YES_NO_OPTION);
+
             if(choice == JOptionPane.YES_OPTION){
-                controler.newGame();
+                controler.newGame(0);
                 resetButton();
             }
             else{
                 parent.changeScene(new Intro());
-            }
+            }         
         }
-        
+                
         this.repaint();
     }
     

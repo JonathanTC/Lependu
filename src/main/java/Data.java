@@ -8,8 +8,9 @@
  *
  * @author thiro
  */
-public interface Observable {
-    public void addObserver(Observer o);
-    public void removeObserver(Observer o);
-    public void notifyObservers(GameState state);
+public class Data {
+    public int score, life;
+    public String word;
+    public char[] tabWord;
+    public int wordCount = 0;
 }
