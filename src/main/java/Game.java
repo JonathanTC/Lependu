@@ -167,7 +167,13 @@ public class Game extends JPanel implements Observer{
         }
         
         if(notifycation.equals(GameState.Lose)){
-            // relance une partie
+            // sauvegarde le score et relance une partie
+
+            if(controler.checkScore()){
+                String name = JOptionPane.showInputDialog(this, "Veuillez entrer votre prénom :");
+                controler.saveScore(name);
+            }
+            
             int choice = JOptionPane.showConfirmDialog(this, "Vous avez perdu !, votre score est de : " + data.score + "\nVoulez vous rejouer ?", "Game over", JOptionPane.YES_NO_OPTION);
 
             if(choice == JOptionPane.YES_OPTION){

@@ -21,12 +21,9 @@ import java.util.stream.Stream;
  * @author thiro
  */
 public class Model implements Observable{
-    /*private int score, life;
-    private String word;
-    private char[] tabWord;*/
     
     private Data data = new Data();
-    
+    private ArrayList<Score> listScore = new ArrayList<Score>();
     private ArrayList<Observer> observers = new ArrayList<Observer>();
 
     @Override
@@ -51,6 +48,14 @@ public class Model implements Observable{
     
     public char readAt(int index){
         return this.data.tabWord[index];
+    }
+    
+    public ArrayList<Score> getListScore(){
+        return this.listScore;
+    }
+    
+    public int getScore(){
+        return this.data.score;
     }
     
     public String getWord(){

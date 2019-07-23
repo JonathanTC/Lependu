@@ -12,7 +12,15 @@ import javax.swing.JPanel;
  * @author thiro
  */
 public class Score extends JPanel{
-    public Score(){
-        System.out.println("Voici les meilleurs score");
+    private String name;
+    private int score;
+    
+    public Score(String name, int score){
+        this.name = name;
+        this.score = score;
+    }
+    
+    public int getScore(){
+        return score;
     }
 }

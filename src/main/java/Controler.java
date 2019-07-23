@@ -1,4 +1,5 @@
 
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 /*
@@ -51,6 +52,37 @@ public class Controler {
 
     public void newGame(int score){
         model.newGame(score);
+    }
+    
+    public boolean checkScore(){     
+        ArrayList<Score> scores = model.getListScore();
+
+        int i= 0;
+        for(Score s : scores){
+            if(model.getScore() > s.getScore()){
+                break;
+            }
+            i++;
+        }
+        
+        if(i<10){
+            return true;
+        }   
+        return false;
+    }
+    
+    public void saveScore(String name){
+        ArrayList<Score> scores = model.getListScore();
+        
+        int i= 0;
+        for(Score s : scores){
+            if(model.getScore() > s.getScore()){
+                break;
+            }
+            i++;
+        }
+        
+        scores.add(i, new Score(name, model.getScore()));
     }
     
     public boolean checkWin(){
