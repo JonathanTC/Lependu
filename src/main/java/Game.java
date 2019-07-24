@@ -61,6 +61,8 @@ public class Game extends JPanel implements Observer{
 
        keyboard = new JPanel();
        keyboard.setLayout(new GridBagLayout());
+       keyboard.setBounds(new Rectangle(30, 170, 420, 160));
+       keyboard.setBackground(Color.WHITE);
        
        resetButton();
        controler.newGame(0);
@@ -75,6 +77,7 @@ public class Game extends JPanel implements Observer{
            gbc.fill = GridBagConstraints.BOTH;
            
            JPanel p = new JPanel();
+           p.setBackground(Color.WHITE);
            p.setPreferredSize(new Dimension(60,40));
            p.setLayout(null);
            
@@ -104,11 +107,11 @@ public class Game extends JPanel implements Observer{
                px++;
        }    
        
-       keyboard.setBounds(new Rectangle(30, 170, 420, 160));
-       keyboard.setBackground(Color.RED);
-
        this.add(keyboard);    
        
+       /*
+       * Chargement des images
+       */
        for(int i=0; i < 7; i++){
            String str = "images/" + Integer.toString(i) + ".jpg";
             try{
