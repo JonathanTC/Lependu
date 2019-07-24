@@ -1,7 +1,6 @@
+package Observer;
 
-import View.Window;
-
-
+import Model.GameState;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -13,13 +12,8 @@ import View.Window;
  *
  * @author thiro
  */
-public class Main {
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        Window w = new Window(830, 430);
-    }
-    
+public interface Observable {
+    public void addObserver(Observer o);
+    public void removeObserver(Observer o);
+    public void notifyObservers(GameState state);
 }
