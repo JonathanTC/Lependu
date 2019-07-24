@@ -3,6 +3,7 @@ import java.awt.List;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,7 +24,6 @@ import java.util.stream.Stream;
 public class Model implements Observable{
     
     private Data data = new Data();
-    private ArrayList<Score> listScore = new ArrayList<Score>();
     private ArrayList<Observer> observers = new ArrayList<Observer>();
 
     @Override
@@ -51,7 +51,7 @@ public class Model implements Observable{
     }
     
     public ArrayList<Score> getListScore(){
-        return this.listScore;
+        return this.data.listScore;
     }
     
     public int getScore(){
@@ -69,7 +69,15 @@ public class Model implements Observable{
     public void setLife(int value){
         this.data.life = value;
     }
-        
+    
+    public Data getData(){
+        return this.data;
+    }
+     
+    public void setData(Data data){
+        this.data = data;
+    }
+    
     public void newGame(int score){   
         this.data.life = 7;
         this.data.score = score;

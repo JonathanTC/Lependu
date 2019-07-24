@@ -11,5 +11,6 @@
 public enum GameState {
     InGame,
     Win,
-    Lose;
+    Lose,
+    Score;
 }

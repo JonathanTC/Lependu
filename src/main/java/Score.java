@@ -1,4 +1,5 @@
 
+import java.io.Serializable;
 import javax.swing.JPanel;
 
 /*
@@ -11,7 +12,7 @@ import javax.swing.JPanel;
  *
  * @author thiro
  */
-public class Score extends JPanel{
+public class Score extends JPanel implements Serializable{
     private String name;
     private int score;
     
@@ -22,5 +23,9 @@ public class Score extends JPanel{
     
     public int getScore(){
         return score;
+    }
+    
+    public String getName(){
+        return this.name;
     }
 }

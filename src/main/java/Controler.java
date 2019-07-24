@@ -1,6 +1,13 @@
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import javax.swing.JOptionPane;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -71,7 +78,7 @@ public class Controler {
         return false;
     }
     
-    public void saveScore(String name){
+    public void saveScore(String name){       
         ArrayList<Score> scores = model.getListScore();
         
         int i= 0;
@@ -83,6 +90,37 @@ public class Controler {
         }
         
         scores.add(i, new Score(name, model.getScore()));
+        ObjectOutputStream oos;
+        
+        try{
+            oos = new ObjectOutputStream(
+                    new BufferedOutputStream(
+                        new FileOutputStream(
+                            new File("sauvegarde.txt"))));
+            
+            oos.writeObject(model.getData());
+            
+            oos.close();
+        }catch(IOException ex){
+           System.out.println(ex.getMessage());
+        }
+    }
+    
+    public void loadScore(){
+        ObjectInputStream ois;
+        
+        try{
+            ois = new ObjectInputStream(
+                    new BufferedInputStream(
+                        new FileInputStream(
+                            new File("sauvegarde.txt"))));
+            
+            model.setData((Data)ois.readObject());
+            ois.close();
+        }
+        catch(ClassNotFoundException | IOException ex){
+           System.out.println(ex.getMessage());
+        }
     }
     
     public boolean checkWin(){
@@ -92,5 +130,9 @@ public class Controler {
         }
         
         return true;
+    }
+
+    public void getBestScore(){
+        model.notifyObservers(GameState.Score);
     }
 }
