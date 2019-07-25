@@ -1,4 +1,4 @@
-package View;
+package Scenes;
 
 
 import java.awt.Color;
@@ -24,11 +24,11 @@ import javax.swing.JPanel;
  *
  * @author thiro
  */
-public class Intro extends JPanel{
+public class SceneIntro extends JPanel{
     
     private Image img;
     
-    public Intro(){
+    public SceneIntro(){
         try {
             img = ImageIO.read(new File("images/131868.jpg"));
         } catch (IOException ex) {

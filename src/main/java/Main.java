@@ -1,7 +1,6 @@
-
+import Controler.Controler;
+import Model.Model;
 import View.Window;
-
-
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -18,8 +17,10 @@ public class Main {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
-        Window w = new Window(830, 430);
-    }
     
+    public static void main(String[] args) {
+        Model model = new Model();
+        Window window = new Window(model);
+        model.addObserver(window);
+    }  
 }

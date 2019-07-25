@@ -1,11 +1,8 @@
-package View;
+package Scenes;
 
-
-import Model.Score;
-import Model.Data;
 import Controler.Controler;
-import Model.GameState;
-import Observer.Observer;
+import Model.Model;
+import Model.Score;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -13,6 +10,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
@@ -26,26 +24,21 @@ import javax.swing.JPanel;
  *
  * @author thiro
  */
-public class SceneScore extends JPanel implements Observer{
+public class SceneScore extends JPanel{
     
     private Controler controler;
-    private Data data;
     private Image img;
+    private ArrayList<Score> scores;
     
-    public SceneScore(Controler controler){
-        this.controler = controler;
-        
+    public SceneScore(Model model){       
         try{
             img = ImageIO.read( new File("images/131868.jpg"));
         }
         catch(IOException ex){
             ex.getMessage();
         }
-    }
-    
-    public void load(){
-        controler.loadScore();
-        controler.getBestScore();
+        
+        scores = model.getScores();
     }
     
     @Override
@@ -58,19 +51,14 @@ public class SceneScore extends JPanel implements Observer{
         
         int size = 40;
         int i = 0;
-        for(Score s : data.listScore){
+        
+        for(Score s : scores){
             g2d.setFont(new Font("Arial", Font.PLAIN, size));
             g2d.drawString(s.getName() + " -> " + s.getScore() + " pts", 20, size + i);
             i = i + size + 10;
-            size -= 5;
+            size -= 3;
         }
         
         g2d.drawImage(img, 450, 35, 300, 300, this);
-    }
-
-    @Override
-    public void update(GameState notifycation, Data data) {
-        if(notifycation.equals(GameState.Score))
-            this.data = data;
     }
 }

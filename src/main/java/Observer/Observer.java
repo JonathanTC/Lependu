@@ -1,7 +1,6 @@
 package Observer;
 
-import Model.Data;
-import Model.GameState;
+import javax.swing.JPanel;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -14,5 +13,6 @@ import Model.GameState;
  * @author thiro
  */
 public interface Observer {
-    public void update(GameState notifycation, Data data);
+    public void update(int score, String word, int count, int life, boolean resetKeys);
+    public void update(JPanel panel);
 }

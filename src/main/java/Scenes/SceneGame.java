@@ -1,36 +1,25 @@
-package View;
+package Scenes;
 
-
-import Model.Data;
 import Controler.Controler;
-import Model.GameState;
+import Model.Model;
 import Observer.Observer;
-import java.awt.BorderLayout;
+import View.Component.Bouton;
+import View.Window;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.Stream;
 import javax.imageio.ImageIO;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 /*
@@ -43,22 +32,24 @@ import javax.swing.JPanel;
  *
  * @author thiro
  */
-public class Game extends JPanel implements Observer{
+public class SceneGame extends JPanel{
     
     private JPanel keyboard;
     private Image[] img = new Image[7]; 
-    private Controler controler;
     private ArrayList<Bouton> boutons = new ArrayList();
-    
-    private Data data = new Data();
     private Window parent;
+    private int score, life, count;
+    private String word;
 
-    public Game(Window window, Controler controler){ 
-        this.controler = controler; 
-        this.parent = window;
+    public SceneGame(Controler controler, Model model){ 
+        this.score = this.count = 0;
+        this.life = 7;
+        this.word = model.getWord();
+        
+        load(controler);
     } 
         
-    public void load(){    
+    public void load(Controler controler){    
        GridBagConstraints gbc = new GridBagConstraints();
        int py, px, nb;
        
@@ -73,10 +64,8 @@ public class Game extends JPanel implements Observer{
        /*
        * Chargement du score
        */
-       controler.loadScore();
-       
-       resetButton();
-       controler.newGame(0);
+
+       //resetKeys();
        
         /*
          * Creation du clavier virtuel (Controller)
@@ -99,7 +88,7 @@ public class Game extends JPanel implements Observer{
                @Override
                public void actionPerformed(ActionEvent e) {
                    bouton.setEnabled(false);
-                   controler.check(letter);  
+                   controler.control(letter);
                }
            });
            
@@ -141,10 +130,10 @@ public class Game extends JPanel implements Observer{
 
         g2d.setFont(new Font("Arial", Font.BOLD, 15));
         g2d.setColor(Color.BLACK);
-        String str = "Nombre de mot trouvé: " + this.data.wordCount;
+        String str = "Nombre de mot trouvé: " + this.count;
         g2d.drawString(str, 30, 70);
 
-        str = "Votre score actuel est de : " + this.data.score;
+        str = "Votre score actuel est de : " + this.score;
         g2d.drawString(str, 30, 90);
 
         /*
@@ -153,57 +142,33 @@ public class Game extends JPanel implements Observer{
         g2d.setFont(new Font("Arial", Font.BOLD, 30));
         g2d.setColor(Color.BLUE);
         
-        g2d.drawChars(this.data.tabWord, 
-                0, 
-                this.data.tabWord.length, 
-                keyboard.getX() + keyboard.getWidth()/2 - (g2d.getFontMetrics().charsWidth(this.data.tabWord, 0, this.data.tabWord.length)/2), 
+        g2d.drawString(this.word, 
+                keyboard.getX() + keyboard.getWidth()/2 - g2d.getFontMetrics().stringWidth(this.word)/2,
                 keyboard.getY() - 15);
-
+                
         /*
         * dessin de l'image
         */
-        g2d.drawImage(img[this.data.life-1], 480, 30, 300, 300, this);   
+        g2d.drawImage(img[this.life-1], 480, 30, 300, 300, this);   
     } 
     
-    @Override
-    public void update(GameState notifycation, Data data) {
-        
-        if(notifycation.equals(GameState.InGame)){
-            // recupere les données
-            this.data = data;
-        }
-        
-        if(notifycation.equals(GameState.Win)){
-            // nouveau mot
-            controler.newGame(data.score);
-            resetButton();
-        }
-        
-        if(notifycation.equals(GameState.Lose)){
-            // sauvegarde le score et relance une partie
+    public void resetKeys(){
+        for(Bouton b : boutons) b.setEnabled(true);
+    }
 
-            if(controler.checkScore()){
-                String name = JOptionPane.showInputDialog(this, "Veuillez entrer votre prénom :");
-                controler.saveScore(name);
-            }
-            
-            int choice = JOptionPane.showConfirmDialog(this, "Vous avez perdu !, votre score est de : " + data.score + "\nVoulez vous rejouer ?", "Game over", JOptionPane.YES_NO_OPTION);
-
-            if(choice == JOptionPane.YES_OPTION){
-                controler.newGame(0);
-                resetButton();
-            }
-            else{
-                parent.changeScene(new Intro());
-            }         
-        }
-                
-        this.repaint();
+    public void setScore(int score){
+        this.score = score;
     }
     
-    private void resetButton(){
-        for(Bouton b : boutons)
-            b.setEnabled(true);
+    public void setWord(String word){
+        this.word = word;
     }
 
+    public void setCount(int count){
+        this.count = count;
+    }
+
+    public void setLife(int life){
+        this.life = life;
+    }
 }

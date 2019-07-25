@@ -3,26 +3,13 @@ package View;
 
 import Model.Model;
 import Controler.Controler;
-import View.Regles;
-import View.Intro;
-import View.SceneScore;
-import View.Game;
+import Observer.Observer;
+import Scenes.SceneRegles;
+import Scenes.SceneIntro;
+import Scenes.SceneScore;
+import Scenes.SceneGame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.Stream;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -40,7 +27,7 @@ import javax.swing.JPanel;
  *
  * @author thiro
  */
-public class Window extends JFrame{
+public class Window extends JFrame implements Observer{
     
     private JMenuBar menu = new JMenuBar();
     private JMenu fichier = new JMenu("Fichier");
@@ -52,34 +39,25 @@ public class Window extends JFrame{
     private JMenuItem help = new JMenuItem("?");
     
     private JPanel scene;
-    private Model model = new Model();
-    private Controler controler = new Controler(model);
+    private SceneGame game;
+    private Controler controler;
     
-    private Game game;
-    private SceneScore sScore;
-    
-    public Window(int width, int height){
+    public Window(Model model){
         this.setTitle("Le pendu");
-        this.setSize(width, height);
+        this.setSize(800, 430);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
         this.setJMenuBar(menu);
         this.setResizable(false);
+        
+        controler = new Controler(model);
 
-        initComponent();
+        initComponent(model);
         
         this.setVisible(true);
     }
 
-    
-    private void initComponent(){      
-        
-        game = new Game(this, controler);
-        model.addObserver(game);
-        
-        sScore = new SceneScore(controler);
-        model.addObserver(sScore);
-                
+    private void initComponent(Model model){                            
         /* construction de la bar de menu */
         menu.add(fichier);
         menu.add(apropos);
@@ -112,8 +90,8 @@ public class Window extends JFrame{
         
         nouveau.addActionListener(new ActionListener(){
             @Override
-            public void actionPerformed(ActionEvent e) {
-                game.load();    
+            public void actionPerformed(ActionEvent e) {  
+                game = new SceneGame(controler, model);
                 changeScene(game);
             };
         });
@@ -121,23 +99,39 @@ public class Window extends JFrame{
         score.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-               sScore.load();
-               changeScene(sScore);
+               changeScene(new SceneScore(model));
             }     
         });
         
         regles.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                changeScene(new Regles());
+                changeScene(new SceneRegles());
             }
         }); 
         
-        changeScene(new Intro());
+        changeScene(new SceneIntro());
     }
     
     public void changeScene(JPanel scene){
         this.setContentPane(scene);
         this.revalidate();
+    }
+
+    @Override
+    public void update(int score, String word, int count, int life, boolean resetKeys) {
+        game.setScore(score);
+        game.setWord(word);
+        game.setCount(count);
+        game.setLife(life);
+        
+        if(resetKeys) game.resetKeys();
+        
+        game.repaint();
+    }
+
+    @Override
+    public void update(JPanel panel) {
+        this.changeScene(panel);
     }
 }

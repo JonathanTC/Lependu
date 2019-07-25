@@ -1,19 +1,6 @@
 package Controler;
-
-
-import Model.Score;
-import Model.Data;
-import Model.GameState;
 import Model.Model;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
+
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -32,113 +19,20 @@ public class Controler {
         this.model = model;
     }
     
-    public void check(char letter){
-        boolean find = false;
-        
+    /*
+     * la fonction qui permet de rectifier le caractère
+    */
+    public void control(char letter){
         letter = (char)((int)letter + 32);
         
-        for(int i=0; i < model.getWord().length(); i++){
-            if(letter == model.getWord().charAt(i)){
-                model.writeAt(i, letter);
-                find = true;
-            }
+        switch(letter){
+            case 'a': model.find(new char[]{'â', 'ä', 'à', letter}); break;
+            case 'e': model.find(new char[]{'é', 'è', 'ê', 'ë', letter}); break;
+            case 'i': model.find(new char[]{'î', 'ï' , letter}); break;
+            case 'o': model.find(new char[]{'ô', 'ö', letter}); break;
+            case 'u': model.find(new char[]{'û', 'ü', 'ù', letter}); break;
+            case 'c': model.find(new char[]{'ç', letter}); break;
+            default : model.find(letter); break;
         }
-        
-        if(!find){
-            model.setLife(model.getLife() - 1);
-            
-            if(model.getLife() <= 0)
-                model.notifyObservers(GameState.Lose);
-            else
-                model.notifyObservers(GameState.InGame);
-        }
-        else{
-            if(checkWin()){
-                model.calculScore();
-                model.notifyObservers(GameState.Win);
-            }
-            else{
-                model.notifyObservers(GameState.InGame);
-            }
-        }
-    }
-
-    public void newGame(int score){
-        model.newGame(score);
-    }
-    
-    public boolean checkScore(){     
-        ArrayList<Score> scores = model.getListScore();
-
-        int i= 0;
-        for(Score s : scores){
-            if(model.getScore() > s.getScore()){
-                break;
-            }
-            i++;
-        }
-        
-        if(i<10){
-            return true;
-        }   
-        return false;
-    }
-    
-    public void saveScore(String name){       
-        ArrayList<Score> scores = model.getListScore();
-        
-        int i= 0;
-        for(Score s : scores){
-            if(model.getScore() > s.getScore()){
-                break;
-            }
-            i++;
-        }
-        
-        scores.add(i, new Score(name, model.getScore()));
-        ObjectOutputStream oos;
-        
-        try{
-            oos = new ObjectOutputStream(
-                    new BufferedOutputStream(
-                        new FileOutputStream(
-                            new File("sauvegarde.txt"))));
-            
-            oos.writeObject(model.getData());
-            
-            oos.close();
-        }catch(IOException ex){
-           System.out.println(ex.getMessage());
-        }
-    }
-    
-    public void loadScore(){
-        ObjectInputStream ois;
-        
-        try{
-            ois = new ObjectInputStream(
-                    new BufferedInputStream(
-                        new FileInputStream(
-                            new File("sauvegarde.txt"))));
-            
-            model.setData((Data)ois.readObject());
-            ois.close();
-        }
-        catch(ClassNotFoundException | IOException ex){
-           System.out.println(ex.getMessage());
-        }
-    }
-    
-    public boolean checkWin(){
-        for(int i=0; i<model.getWord().length(); i++){
-            if(model.readAt(i) == '*')
-                return false;
-        }
-        
-        return true;
-    }
-
-    public void getBestScore(){
-        model.notifyObservers(GameState.Score);
     }
 }

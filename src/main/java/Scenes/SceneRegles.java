@@ -1,4 +1,4 @@
-package View;
+package Scenes;
 
 
 import java.awt.Color;
@@ -17,8 +17,8 @@ import javax.swing.JPanel;
  *
  * @author thiro
  */
-public class Regles extends JPanel{
-    public Regles(){ System.out.println("Regles"); }
+public class SceneRegles extends JPanel{
+    public SceneRegles(){ System.out.println("Regles"); }
     
     public void paintComponent(Graphics g){
         Graphics2D g2d = (Graphics2D)g;
